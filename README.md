@@ -151,12 +151,17 @@ chmod +x 2025_09_26_exp_train
 ## 🧾 Citation
 
 ```bibtex
-@article{Cuervo2025Voronoi,
-  title={Voronoi-Induced Artifacts from Grid-to-Mesh Coupling and Bathymetry-Aware Meshes in Graph Neural Networks for Sea Surface Temperature Forecasting},
-  author={Cuervo-Londoño, Giovanny A. and Reyes, José G. and Rodríguez-Santana, Ángel and Sánchez, Javier},
-  journal={Electronics},
-  year={2025},
-  publisher={MDPI}
+@Article{GACLondono2025Voronoi,
+AUTHOR = {Cuervo-Londoño, Giovanny A. and Reyes, José G. and Rodríguez-Santana, Ángel and Sánchez, Javier},
+TITLE = {Voronoi-Induced Artifacts from Grid-to-Mesh Coupling and Bathymetry-Aware Meshes in Graph Neural Networks for Sea Surface Temperature Forecasting},
+JOURNAL = {Electronics},
+VOLUME = {14},
+YEAR = {2025},
+NUMBER = {24},
+ARTICLE-NUMBER = {4841},
+URL = {https://www.mdpi.com/2079-9292/14/24/4841},
+ISSN = {2079-9292},
+DOI = {10.3390/electronics14244841}
 }
 ```
 
