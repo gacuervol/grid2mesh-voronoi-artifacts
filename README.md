@@ -18,6 +18,10 @@
       * **Proof of Concept:** Code demonstrating the algebraic equivalence between k-NN coupling and **Order-k Voronoi diagrams**.
       * **Spatial Analysis:** "Error Analysis by Spatial Tessellation" (per-tile RMSE growth).
 
+The repository contains LAM versions of:
+
+* The hierarchical model from [Oskarsson et al. (2024)](https://github.com/mllam/neural-lam). 
+* The SeaCast model from [Holmberg et al. (2025)](https://github.com/deinal/seacast).
 -----
 
 ## 🔍 Problem & Key Contributions (TL;DR)
