@@ -34,26 +34,27 @@
 ## 📦 Repository Layout
 
 ```
-gnn-voronoi-sst/
-├─ data/
-│  ├─ raw/              # NetCDF downloads (SST, winds, bathymetry)
-│  └─ processed/        # Preprocessed tensors (Lat-Lon-Time) & Masks
-├─ meshes/
-│  ├─ configs/          # JSON/YAML configs (UC, U, B, F)
-│  └─ cache/            # Serialized graphs (edge lists, coords)
-├─ src/
-│  ├─ data/             # Downloaders & Preprocessors (Land-Sea/Bathy masks)
-│  ├─ graphs/           # Mesh builders, k-NN coupling (KDTree), Voronoi utils
-│  ├─ models/           # Interaction Network (Encoder-Processor-Decoder)
-│  ├─ train.py          # Training loop (AdamW, Cosine LR, WMSE)
-│  ├─ eval.py           # RMSE metrics, "Error Analysis by Spatial Tessellation"
-│  └─ viz/              # Figure scripts (RMSE maps, Gradient diagnostics)
-├─ experiments/
-│  ├─ exp1_connectivity/# Runners for k-sweep (1..5)
-│  └─ exp2_density/     # Runners for density sweep (Golden Ratio scaling)
-├─ configs/             # Hydra/YAML configs
-├─ environment.yml
-└─ README.md
+grid2mesh-voronoi-artifacts/
+├───docs
+├───neural_lam
+│   └───models
+├───notebooks
+│   ├───article_analysis
+│   └───article_review
+├───reports
+│   └───figures
+├───seacast_cli
+│   ├───bin
+│   ├───config
+│   └───lib
+├───src
+│   └───seacast_tools
+│       └───mesh_models
+│           └───supplementary_masks
+└───tests
+    ├───e2e
+    ├───integration
+    └───unit
 ```
 
 -----
