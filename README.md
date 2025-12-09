@@ -1,7 +1,7 @@
 # **Voronoi-Induced Artifacts from Grid-to-Mesh Coupling and Bathymetry-Aware Meshes in GNNs for Sea Surface Temperature Forecasting**
 
 > Official repository for the paper: *Voronoi-Induced Artifacts from Grid-to-Mesh Coupling and Bathymetry-Aware Meshes in Graph Neural Networks for Sea Surface Temperature Forecasting* (2025).
-
+> **Article Link:** [https://www.mdpi.com/2079-9292/14/24/4841](https://www.mdpi.com/2079-9292/14/24/4841)
 -----
 
 ## ✨ What’s in this repo
@@ -98,53 +98,34 @@ We implement four mesh generation strategies with consistent node counts per lev
   * *Theory:* This induces partitions $\text{VP}_i$ defined by unique generator subsets $P^k_i$, mathematically equivalent to **Order-k Voronoi diagrams**.
 
 -----
+## 🧪 Reproducing Paper Experiments
 
-## 🚀 Quickstart
+We provide several bash scripts to reproduce specific experimental configurations (varying mesh resolution, connectivity, etc.) trained on dates between 2000 and 2020.
 
-**Train F-mesh (k=4) at High Resolution (159 nodes):**
+**Available Scripts:**
 
-```bash
-python -m src.train \
-  --data_dir data/processed \
-  --mesh meshes/cache/F_159_78.pkl \
-  --k 4 \
-  --config configs/train.yaml \
-  --out runs/fmesh_k4_159_78
-```
+*   `2025_07_05_exp_train`
+*   `2025_07_10_exp_train`
+*   `2025_07_11_exp_train`
+*   `2025_07_16_exp_train`
+*   `2025_09_16_exp_train_DOS`
+*   `2025_09_16_exp_train_UNO`
+*   `2025_09_26_exp_train`
 
-**Evaluate & Diagnose Artifacts:**
+**Usage:**
 
-```bash
-# Generate RMSE maps, Gradients, and Voronoi Overlays
-python -m src.viz.make_figures \
-  --run_dir runs/fmesh_k4_159_78 \
-  --plot_type "voronoi_diagnostic"
-```
-
------
-
-## 🔁 Reproducing Paper Experiments
-
-### Experiment 1: Connectivity Sweep ($k=1 \dots 5$)
-
-Tests the hypothesis that intermediate $k$ smooths Voronoi artifacts.
+To run any of these experiments, first ensure the script is executable, then run it. For example, for the Sep 26th experiment:
 
 ```bash
-bash experiments/exp1_connectivity/run_all.sh --meshes U UC B F --k_list "1 2 3 4 5"
+# 1. Grant execution permissions
+chmod +x 2025_09_26_exp_train
+
+# 2. Run the experiment
+./2025_09_26_exp_train
 ```
 
-  * **Result:** $k=3$ (B-mesh) and $k=4$ (F-mesh) yield lowest RMSE. $k=1$ produces sharp tessellation discontinuities.
-
-### Experiment 2: Node Density Sweep
-
-Increases nodes by Golden Ratio $\varphi \approx 1.618$ (Levels: 14, 20, 34, 52, 159).
-
-```bash
-bash experiments/exp2_density/run_all.sh --meshes U UC B F --scale_factor 1.618
-```
-
-  * **Result:** Statistical divergence (Bayesian Intervals) appears only after Day 6. Unstructured meshes outperform structured ones significantly at high resolutions; structured meshes degrade due to "edge redundancy."
-
+> [!NOTE]
+> These scripts assume you have properly set up the environment and downloaded the necessary data.
 -----
 
 ## 📊 Expected Results (Sanity Checks)
@@ -159,11 +140,8 @@ bash experiments/exp2_density/run_all.sh --meshes U UC B F --scale_factor 1.618
 ## 🛠️ Environment & Dependencies
 
   * **Python:** 3.10
-  * **Core:** PyTorch, PyTorch Geometric (or scatter/sparse)
-  * **Data:** Xarray, NetCDF4, NumPy
-  * **Geo/Viz:** Cartopy, Shapely, Matplotlib
-  * **Optional:** `pykeops` (for fast k-NN on large grids), `potpourri3d` (for FPS).
-
+  * **Core:** PyTorch Geometric (or scatter/sparse)
+  * **Data:** Xarray, NumPy
 -----
 
 ## 🧾 Citation
