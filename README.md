@@ -68,20 +68,20 @@ We use **public** datasets covering the Canary Islands & NW Africa ($19.55^{\cir
   * **Bathymetry:** NOAA ETOPO Global Relief Model.
 
 ### Download & Preprocess
+The **`download_data`** script is a wrapper to simplify data acquisition from CMEMS.
 
-```bash
-# 1) Setup Environment
-conda env create -f environment.yml && conda activate gnn-voronoi-sst
+**Instructions:**
 
-# 2) Download Data (2000-2020)
-python -m src.data.download_all --out data/raw --years 2000-2020
-
-# 3) Preprocess (Crop, Mask, Normalize)
-python -m src.data.preprocess \
-  --in data/raw --out data/processed \
-  --bbox "lat_min=19.55,lat_max=34.52,lon_min=-20.97,lon_max=-5.98"
-```
-
+1.  **Open the `download_data` script.**
+2.  **Enter your CMEMS `user` and `password`** manually into the variables provided at the beginning of the file.
+3.  **Make the script executable:**
+    ```bash
+    chmod +x download_data
+    ```
+4.  **Run the script:**
+    ```bash
+    ./download_data
+    ```
 -----
 
 ## 🧱 Mesh Families & Mathematical Formulation
