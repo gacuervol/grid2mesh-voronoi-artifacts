@@ -1,0 +1,99 @@
+# ignore all __pycache__ directories
+**/__pycache__/
+# ignore all .pyc files
+*.pyc
+# ignore all .vscode directories
+.vscode/
+# ignore all .deb files
+*.deb
+# ignore all .out files
+*.out
+# ignore all .npy files
+*.npy
+# ignore all output directories
+output/
+
+wandb
+slurm_log*
+saved_models
+data
+graphs
+*.sif
+sweeps
+test_*.sh
+.ipynb_checkpoints
+*.log
+# *.sh
+*.html
+slurm
+hierarchical
+venv
+figures/results
+
+src/seacast_tools/mesh_models/supplementary_masks/*.npy
+#figures/
+reports/download_data_summary.txt
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+develop-eggs/
+lib64/
+parts/
+sdist/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# pyenv
+.python-version
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
+# mkdocs documentation
+/site
+
+### Vim ###
+# Swap
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+# Session
+Session.vim
+Sessionx.vim
+
+# Temporary
+.netrwhist
+*~
+
+# Auto-generated tag files
+tags
+
+# Persistent undo
+[._]*.un~
+
+# Coc configuration directory
+.vim

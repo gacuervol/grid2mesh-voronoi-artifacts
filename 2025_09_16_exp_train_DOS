@@ -1,0 +1,301 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ==========================================================
+#  Experimental setup: Mesh resolution vs Grid coverage
+# ==========================================================
+#
+# We will run a battery of experiments to analyze how the
+# mesh resolution (N_mesh) affects the grid-to-mesh ratio.
+#
+# The reference grid has 90,000 nodes, and for each experiment
+# we compute:
+#
+#     Grid / mesh = 90,000 / N_mesh
+#
+# The experiments are:
+#
+#   Exp | N_mesh | Grid / mesh
+#   ----+--------+-------------
+#     1 |     25 |     3600.000
+#     2 |     40 |     2250.000
+#     3 |     65 |     1384.615
+#     4 |    105 |      857.143
+#     5 |    170 |      529.412
+#     6 |    275 |      327.273
+#
+# ----------------------------------------------------------
+# Rationale:
+#
+# - As the number of mesh nodes increases, the number of grid
+#   nodes covered by a single mesh node (Grid/mesh ratio)
+#   naturally decreases.
+#
+# - Ideally, this decrease should follow a geometric sequence,
+#   with a reduction factor between 1.5 and 2 at each step.
+#
+# - To guide this progression, we use the golden ratio (phi),
+#   approximately 1.618, which lies in the desired range.
+#
+# - This ensures that between successive experiments, the
+#   number of grid nodes per mesh node decreases smoothly
+#   by a factor close to phi.
+#
+# ----------------------------------------------------------
+# Goal:
+#
+# These experiments will help us evaluate the sensitivity of
+# the simulation results to mesh resolution, ensuring that
+# the mesh is refined in a controlled and systematic way.
+#
+# ==========================================================
+
+# ----------------------------
+# Hyperparameters:
+
+epochs=150
+sanity_check="false"
+# crossing_edges options: 1 (crossing edges) or 0 (non-crossing edges)
+crossing_edges=0
+# ==========================================================
+#  Non-uniform mesh definition
+# ==========================================================
+#
+# To ensure fair comparison between different mesh types,
+# one of the key conditions is that the meshes under
+# comparison must contain the same number of nodes.
+#
+# For regular (square) meshes:
+# - The initial number of nodes is given by k^2.
+# - However, many of these nodes fall on land and must be
+#   removed. This means the *final* number of usable nodes
+#   is not equal to k^2, but only those that remain after
+#   land removal.
+#
+# - Therefore, we must first execute the uniform meshes to
+#   determine their *final node counts*. These final values
+#   then serve as the reference for defining the non-uniform
+#   meshes, which do not require land-node removal because
+#   their generation algorithms place nodes only over the sea.
+#
+# ----------------------------------------------------------
+# Final number of nodes (after removal) for uniform meshes:
+#
+#   Exp | Target N_mesh | Final nodes
+#   ----+---------------+------------
+#     1 |     ~25 (5^2) |     14
+#     2 |     ~40 (6^2) |     20
+#     3 |     ~65 (8^2) |     34
+#     4 |    ~105 (10^2)|     52
+#     5 |    ~170 (13^2)|      -
+#     6 |    ~275 (17^2)|    159
+#
+# ----------------------------------------------------------
+# Two-level meshes:
+# For the hierarchical (two-level) configurations, the final
+# node counts after removal were:
+#
+#   Exp | Level-2 nodes
+#   ----+---------------
+#     1 |       9
+#     2 |       9
+#     3 |      20
+#     4 |      27
+#     5 |      78
+#
+# ----------------------------------------------------------
+# In summary:
+# - Non-uniform meshes are tuned to match the final number of
+#   nodes obtained from uniform meshes (after removal).
+# - This guarantees comparability: both uniform and non-uniform
+#   meshes end up with equivalent node counts.
+#
+# ==========================================================
+
+# ----------------------------
+
+# EXPERIMENTS BATHYMETRY
+
+# ----------------------------
+exp_name="bathymetry"
+# crossing_edges options: 1 (crossing edges) or 0 (non-crossing edges)
+# mesh_type options: "uniform", "bathymetry"
+mesh_type="bathymetry"
+
+# ----------------------------
+# Experimento 1
+# Parameters:
+# If uniform the number of nodes m,n is implicit mxm, nxn
+# If bathymetry the number of nodes is explicit m, n
+mesh_nodes="14, 9"
+g2m_m2g_conect=4
+# ----------------------------
+# This script creates a hierarchical mesh with non-crossing edges guided by bathymetry and trains a model on it.
+./seacast_cli/bin/seacast train -s ${sanity_check} -e ${epochs} -n ${exp_name} -m ${mesh_type} -o "${mesh_nodes}" -c ${g2m_m2g_conect} -x ${crossing_edges}
+last_dir_name=$(basename "$(ls -td ${HOME}/Seacast/saved_models/*/ | head -n 1)")
+printf "%s\n" "$last_dir_name"
+./seacast_cli/bin/seacast predict -s ${sanity_check} -c ${last_dir_name} -d cuda
+
+# ----------------------------
+# Experimento 2
+# Parameters:
+# If uniform the number of nodes m,n is implicit mxm, nxn
+# If bathymetry the number of nodes is explicit m, n
+mesh_nodes="20, 9"
+g2m_m2g_conect=4
+# ----------------------------
+# This script creates a hierarchical mesh with non-crossing edges guided by bathymetry and trains a model on it.
+./seacast_cli/bin/seacast train -s ${sanity_check} -e ${epochs} -n ${exp_name} -m ${mesh_type} -o "${mesh_nodes}" -c ${g2m_m2g_conect} -x ${crossing_edges}
+last_dir_name=$(basename "$(ls -td ${HOME}/Seacast/saved_models/*/ | head -n 1)")
+printf "%s\n" "$last_dir_name"
+./seacast_cli/bin/seacast predict -s ${sanity_check} -c ${last_dir_name} -d cuda
+
+# ----------------------------
+# Experimento 3
+# Parameters:
+# If uniform the number of nodes m,n is implicit mxm, nxn
+# If bathymetry the number of nodes is explicit m, n
+mesh_nodes="34, 20"
+g2m_m2g_conect=4
+# ----------------------------
+# This script creates a hierarchical mesh with non-crossing edges guided by bathymetry and trains a model on it.
+./seacast_cli/bin/seacast train -s ${sanity_check} -e ${epochs} -n ${exp_name} -m ${mesh_type} -o "${mesh_nodes}" -c ${g2m_m2g_conect} -x ${crossing_edges}
+last_dir_name=$(basename "$(ls -td ${HOME}/Seacast/saved_models/*/ | head -n 1)")
+printf "%s\n" "$last_dir_name"
+./seacast_cli/bin/seacast predict -s ${sanity_check} -c ${last_dir_name} -d cuda
+
+# ----------------------------
+# Experimento 4
+# Parameters:
+# If uniform the number of nodes m,n is implicit mxm, nxn
+# If bathymetry the number of nodes is explicit m, n
+mesh_nodes="52, 27"
+g2m_m2g_conect=4
+# ----------------------------
+# This script creates a hierarchical mesh with non-crossing edges guided by bathymetry and trains a model on it.
+./seacast_cli/bin/seacast train -s ${sanity_check} -e ${epochs} -n ${exp_name} -m ${mesh_type} -o "${mesh_nodes}" -c ${g2m_m2g_conect} -x ${crossing_edges}
+last_dir_name=$(basename "$(ls -td ${HOME}/Seacast/saved_models/*/ | head -n 1)")
+printf "%s\n" "$last_dir_name"
+./seacast_cli/bin/seacast predict -s ${sanity_check} -c ${last_dir_name} -d cuda
+
+# # ----------------------------
+# # Experimento 5
+# # Parameters:
+# # If uniform the number of nodes m,n is implicit mxm, nxn
+# # If bathymetry the number of nodes is explicit m, n
+# mesh_nodes="13, 9"
+# g2m_m2g_conect=4
+# # ----------------------------
+# # This script creates a hierarchical mesh with non-crossing edges guided by bathymetry and trains a model on it.
+# ./seacast_cli/bin/seacast train -s ${sanity_check} -e ${epochs} -n ${exp_name} -m ${mesh_type} -o "${mesh_nodes}" -c ${g2m_m2g_conect} -x ${crossing_edges}
+# last_dir_name=$(basename "$(ls -td ${HOME}/Seacast/saved_models/*/ | head -n 1)")
+# printf "%s\n" "$last_dir_name"
+# ./seacast_cli/bin/seacast predict -s ${sanity_check} -c ${last_dir_name} -d cuda
+
+# ----------------------------
+# Experimento 6
+# Parameters:
+# If uniform the number of nodes m,n is implicit mxm, nxn
+# If bathymetry the number of nodes is explicit m, n
+mesh_nodes="159, 78"
+g2m_m2g_conect=4
+# ----------------------------
+# This script creates a hierarchical mesh with non-crossing edges guided by bathymetry and trains a model on it.
+./seacast_cli/bin/seacast train -s ${sanity_check} -e ${epochs} -n ${exp_name} -m ${mesh_type} -o "${mesh_nodes}" -c ${g2m_m2g_conect} -x ${crossing_edges}
+last_dir_name=$(basename "$(ls -td ${HOME}/Seacast/saved_models/*/ | head -n 1)")
+printf "%s\n" "$last_dir_name"
+./seacast_cli/bin/seacast predict -s ${sanity_check} -c ${last_dir_name} -d cuda
+
+# ----------------------------
+
+# EXPERIMENTS FPS
+
+# ----------------------------
+exp_name="fps"
+# crossing_edges options: 1 (crossing edges) or 0 (non-crossing edges)
+# mesh_type options: "uniform", "bathymetry"
+mesh_type="fps"
+
+# ----------------------------
+# Experimento 1
+# Parameters:
+# If uniform the number of nodes m,n is implicit mxm, nxn
+# If bathymetry the number of nodes is explicit m, n
+mesh_nodes="14, 9"
+g2m_m2g_conect=4
+# ----------------------------
+# This script creates a hierarchical mesh with non-crossing edges guided by bathymetry and trains a model on it.
+./seacast_cli/bin/seacast train -s ${sanity_check} -e ${epochs} -n ${exp_name} -m ${mesh_type} -o "${mesh_nodes}" -c ${g2m_m2g_conect} -x ${crossing_edges}
+last_dir_name=$(basename "$(ls -td ${HOME}/Seacast/saved_models/*/ | head -n 1)")
+printf "%s\n" "$last_dir_name"
+./seacast_cli/bin/seacast predict -s ${sanity_check} -c ${last_dir_name} -d cuda
+
+# ----------------------------
+# Experimento 2
+# Parameters:
+# If uniform the number of nodes m,n is implicit mxm, nxn
+# If bathymetry the number of nodes is explicit m, n
+mesh_nodes="20, 9"
+g2m_m2g_conect=4
+# ----------------------------
+# This script creates a hierarchical mesh with non-crossing edges guided by bathymetry and trains a model on it.
+./seacast_cli/bin/seacast train -s ${sanity_check} -e ${epochs} -n ${exp_name} -m ${mesh_type} -o "${mesh_nodes}" -c ${g2m_m2g_conect} -x ${crossing_edges}
+last_dir_name=$(basename "$(ls -td ${HOME}/Seacast/saved_models/*/ | head -n 1)")
+printf "%s\n" "$last_dir_name"
+./seacast_cli/bin/seacast predict -s ${sanity_check} -c ${last_dir_name} -d cuda
+
+# ----------------------------
+# Experimento 3
+# Parameters:
+# If uniform the number of nodes m,n is implicit mxm, nxn
+# If bathymetry the number of nodes is explicit m, n
+mesh_nodes="34, 20"
+g2m_m2g_conect=4
+# ----------------------------
+# This script creates a hierarchical mesh with non-crossing edges guided by bathymetry and trains a model on it.
+./seacast_cli/bin/seacast train -s ${sanity_check} -e ${epochs} -n ${exp_name} -m ${mesh_type} -o "${mesh_nodes}" -c ${g2m_m2g_conect} -x ${crossing_edges}
+last_dir_name=$(basename "$(ls -td ${HOME}/Seacast/saved_models/*/ | head -n 1)")
+printf "%s\n" "$last_dir_name"
+./seacast_cli/bin/seacast predict -s ${sanity_check} -c ${last_dir_name} -d cuda
+
+# ----------------------------
+# Experimento 4
+# Parameters:
+# If uniform the number of nodes m,n is implicit mxm, nxn
+# If bathymetry the number of nodes is explicit m, n
+mesh_nodes="52, 27"
+g2m_m2g_conect=4
+# ----------------------------
+# This script creates a hierarchical mesh with non-crossing edges guided by bathymetry and trains a model on it.
+./seacast_cli/bin/seacast train -s ${sanity_check} -e ${epochs} -n ${exp_name} -m ${mesh_type} -o "${mesh_nodes}" -c ${g2m_m2g_conect} -x ${crossing_edges}
+last_dir_name=$(basename "$(ls -td ${HOME}/Seacast/saved_models/*/ | head -n 1)")
+printf "%s\n" "$last_dir_name"
+./seacast_cli/bin/seacast predict -s ${sanity_check} -c ${last_dir_name} -d cuda
+
+# # ----------------------------
+# # Experimento 5
+# # Parameters:
+# # If uniform the number of nodes m,n is implicit mxm, nxn
+# # If bathymetry the number of nodes is explicit m, n
+# mesh_nodes="13, 9"
+# g2m_m2g_conect=4
+# # ----------------------------
+# # This script creates a hierarchical mesh with non-crossing edges guided by bathymetry and trains a model on it.
+# ./seacast_cli/bin/seacast train -s ${sanity_check} -e ${epochs} -n ${exp_name} -m ${mesh_type} -o "${mesh_nodes}" -c ${g2m_m2g_conect} -x ${crossing_edges}
+# last_dir_name=$(basename "$(ls -td ${HOME}/Seacast/saved_models/*/ | head -n 1)")
+# printf "%s\n" "$last_dir_name"
+# ./seacast_cli/bin/seacast predict -s ${sanity_check} -c ${last_dir_name} -d cuda
+
+# ----------------------------
+# Experimento 6
+# Parameters:
+# If uniform the number of nodes m,n is implicit mxm, nxn
+# If bathymetry the number of nodes is explicit m, n
+mesh_nodes="159, 78"
+g2m_m2g_conect=4
+# ----------------------------
+# This script creates a hierarchical mesh with non-crossing edges guided by bathymetry and trains a model on it.
+./seacast_cli/bin/seacast train -s ${sanity_check} -e ${epochs} -n ${exp_name} -m ${mesh_type} -o "${mesh_nodes}" -c ${g2m_m2g_conect} -x ${crossing_edges}
+last_dir_name=$(basename "$(ls -td ${HOME}/Seacast/saved_models/*/ | head -n 1)")
+printf "%s\n" "$last_dir_name"
+./seacast_cli/bin/seacast predict -s ${sanity_check} -c ${last_dir_name} -d cuda
