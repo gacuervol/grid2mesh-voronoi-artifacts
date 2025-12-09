@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Cargar funciones comunes
+source "$(dirname "$0")/../lib/training.sh"
+source "$(dirname "$0")/../lib/inference.sh"
+source "$(dirname "$0")/../lib/download_data.sh"
+
+# Revisar si se pasó algún comando
+if [[ -z "$1" ]]; then
+  printf "%s\n" "❌ Error: No se especificó ningún comando."
+  printf "%s\n" "Uso: seacast <comando> [opciones]"
+  printf "%s\n" "Comandos disponibles: train"
+  exit 1
+fi
+
+COMMAND="$1"
+shift  # Remueve el primer argumento
+
+case "$COMMAND" in
+  train)
+    training "$@" ;;
+  predict)
+    inference "$@" ;;
+  download)
+    download_data "$@" ;;
+  *)
+    printf "%s\n" "Unknown command: $COMMAND"
+    printf "%s\n" "Available: train"
+    exit 1
+    ;;
+esac
